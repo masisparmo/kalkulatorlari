@@ -1,5 +1,5 @@
 Dokumentasi Aplikasi Perencanaan Olah Raga Lari / Jalan (Kalkulator Lari)
-=======================================================⸗
+=======================================================
 
 1\. Pengenalan Aplikasi
 -----------------------
