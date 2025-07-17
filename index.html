@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Perencanaan Olah Raga Lari / Jalan</title>
+    
+    <!-- Menggunakan Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Menggunakan Font Inter dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Mengaplikasikan font Inter ke seluruh halaman */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Style tambahan untuk input number agar tidak menampilkan panah */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Transisi untuk kemunculan elemen */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Styling untuk radio button custom */
+        .plan-option:checked + label {
+            border-color: #6366f1; /* indigo-500 */
+            background-color: #eef2ff; /* indigo-50 */
+            color: #4338ca; /* indigo-700 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen py-10 px-4">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg">
+        
+        <!-- Header Aplikasi -->
+        <div class="text-center mb-8">
+            <div class="inline-block bg-indigo-100 text-indigo-600 p-3 rounded-full mb-4">
+                <!-- Ikon Orang Berlari -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  <path d="M15.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 12H10a1 1 0 110-2h2.586l-2.293-2.293a1 1 0 011.414-1.414l4 4z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Aplikasi Perencanaan Olah Raga Lari / Jalan</h1>
+            <p class="text-gray-500 mt-2">Rencanakan sesi latihan Anda berdasarkan target Durasi atau Pace.</p>
+        </div>
+
+        <!-- Form Input -->
+        <div class="space-y-6">
+            <!-- Input Jarak -->
+            <div>
+                <label for="distance" class="block text-sm font-semibold text-gray-700 mb-2">Rencana Jarak Tempuh (km)</label>
+                <div class="relative">
+                    <input type="number" id="distance" name="distance" placeholder="Contoh: 5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                </div>
+            </div>
+
+            <!-- Pilihan Perencanaan -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Rencana Berdasarkan</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="radio" name="planType" id="planByPace" value="pace" class="hidden plan-option" checked>
+                    <label for="planByPace" class="block text-center p-3 border border-gray-300 rounded-lg cursor-pointer transition duration-200 font-medium">Pace</label>
+                    
+                    <input type="radio" name="planType" id="planByDuration" value="duration" class="hidden plan-option">
+                    <label for="planByDuration" class="block text-center p-3 border border-gray-300 rounded-lg cursor-pointer transition duration-200 font-medium">Durasi</label>
+                </div>
+            </div>
+
+            <!-- Input Pace (Default) -->
+            <div id="paceInputContainer">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Target Pace per km</label>
+                <div class="flex items-center space-x-3">
+                    <input type="number" id="paceMinutes" name="paceMinutes" placeholder="Menit" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                    <span class="text-gray-500 font-bold text-2xl">:</span>
+                    <input type="number" id="paceSeconds" name="paceSeconds" placeholder="Detik" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                </div>
+            </div>
+
+            <!-- Input Durasi (Hidden by default) -->
+            <div id="durationInputContainer" class="hidden">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Target Durasi (Jam:Menit:Detik)</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <input type="number" id="durationHours" name="durationHours" placeholder="Jam" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                    <input type="number" id="durationMinutes" name="durationMinutes" placeholder="Menit" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                    <input type="number" id="durationSeconds" name="durationSeconds" placeholder="Detik" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button id="resetBtn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 transform active:scale-95">
+                Reset
+            </button>
+            <button id="calculateBtn" class="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg hover:from-indigo-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform active:scale-95">
+                Hitung Rencana
+            </button>
+        </div>
+
+        <!-- Pesan Error -->
+        <div id="error-message" class="mt-6 text-center text-red-600 font-medium hidden p-3 bg-red-50 rounded-lg"></div>
+
+        <!-- Area Hasil -->
+        <div id="results" class="mt-8 pt-6 border-t border-gray-200 hidden">
+            <h2 class="text-xl font-bold text-gray-800 text-center mb-5">Rencana Latihan Anda</h2>
+            <div class="space-y-4">
+                <!-- Hasil Kalkulasi -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="resultCard1" class="bg-slate-50 p-4 rounded-lg text-center">
+                        <span id="resultLabel1" class="text-sm font-medium text-gray-500">Target Durasi</span>
+                        <p id="resultValue1" class="font-bold text-3xl text-indigo-600 mt-1">00:00:00</p>
+                    </div>
+                    <div id="resultCard2" class="bg-slate-50 p-4 rounded-lg text-center">
+                        <span id="resultLabel2" class="text-sm font-medium text-gray-500">Target Pace</span>
+                        <p id="resultValue2" class="font-bold text-3xl text-indigo-600 mt-1">00:00 /km</p>
+                    </div>
+                </div>
+                
+                <!-- Hasil Kategori -->
+                <div class="bg-slate-50 p-5 rounded-lg">
+                    <div class="flex items-center justify-between">
+                         <span class="font-medium text-gray-500">Kategori Aktivitas</span>
+                         <span id="categoryResult" class="font-bold text-lg text-indigo-600 text-right"></span>
+                    </div>
+                    <p id="categoryDescription" class="text-sm text-gray-600 mt-2 text-justify"></p>
+                </div>
+
+                <!-- Fitur Gemini -->
+                <div class="mt-6 text-center">
+                    <button id="getTipsBtn" class="bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:shadow-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 transform active:scale-95">
+                        ✨ Dapatkan Tips Latihan
+                    </button>
+                </div>
+
+                <!-- Kontainer Hasil Gemini -->
+                <div id="gemini-container" class="mt-6 hidden">
+                    <div id="gemini-loader" class="flex justify-center items-center p-4">
+                        <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <p class="ml-3 text-gray-600">Membuat tips untuk Anda...</p>
+                    </div>
+                    <div id="gemini-tips" class="bg-indigo-50 p-5 rounded-lg text-gray-700 space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mendapatkan elemen-elemen dari DOM
+        const distanceInput = document.getElementById('distance');
+        const planTypeRadios = document.querySelectorAll('input[name="planType"]');
+        const paceInputContainer = document.getElementById('paceInputContainer');
+        const durationInputContainer = document.getElementById('durationInputContainer');
+        const paceMinutesInput = document.getElementById('paceMinutes');
+        const paceSecondsInput = document.getElementById('paceSeconds');
+        const durationHoursInput = document.getElementById('durationHours');
+        const durationMinutesInput = document.getElementById('durationMinutes');
+        const durationSecondsInput = document.getElementById('durationSeconds');
+        
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultsDiv = document.getElementById('results');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        const resultLabel1 = document.getElementById('resultLabel1');
+        const resultValue1 = document.getElementById('resultValue1');
+        const resultLabel2 = document.getElementById('resultLabel2');
+        const resultValue2 = document.getElementById('resultValue2');
+        
+        const categoryResultSpan = document.getElementById('categoryResult');
+        const categoryDescriptionP = document.getElementById('categoryDescription');
+        
+        const getTipsBtn = document.getElementById('getTipsBtn');
+        const geminiContainer = document.getElementById('gemini-container');
+        const geminiLoader = document.getElementById('gemini-loader');
+        const geminiTipsDiv = document.getElementById('gemini-tips');
+
+        let currentResults = {};
+
+        // Fungsi untuk toggle input berdasarkan pilihan
+        planTypeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'pace') {
+                    paceInputContainer.classList.remove('hidden');
+                    durationInputContainer.classList.add('hidden');
+                } else {
+                    paceInputContainer.classList.add('hidden');
+                    durationInputContainer.classList.remove('hidden');
+                }
+            });
+        });
+
+        const pad = (num) => String(num).padStart(2, '0');
+
+        function getCategory(paceInSeconds) {
+            if (paceInSeconds <= 0) return { name: "Tidak Valid", description: "Pace tidak boleh nol atau negatif." };
+            if (paceInSeconds < 240) return { name: "Sprint / Lari Cepat", description: "Lari dengan kecepatan maksimal dalam jarak pendek. Ini adalah latihan anaerobik intensitas tinggi untuk membangun kekuatan dan kecepatan eksplosif." };
+            if (paceInSeconds < 330) return { name: "Lari Interval", description: "Latihan yang menyelingi antara lari cepat dengan periode istirahat. Tujuannya adalah untuk meningkatkan kecepatan dan efisiensi lari." };
+            if (paceInSeconds < 420) return { name: "Lari Tempo", description: "Lari dengan kecepatan 'cukup berat' yang masih bisa dipertahankan secara konsisten untuk periode waktu tertentu. Bertujuan untuk meningkatkan ambang laktat." };
+            if (paceInSeconds < 555) return { name: "Lari Ringan / Jarak Jauh", description: "Pace yang stabil dan nyaman, di mana Anda masih bisa bercakap-cakap. Biasanya dilakukan untuk pemulihan atau membangun daya tahan aerobik." };
+            if (paceInSeconds < 750) return { name: "Jalan Cepat / Power Walking", description: "Kecepatan yang membuat napas dan detak jantung sedikit meningkat. Aktivitas ini sudah tergolong sebagai olahraga kardio yang efektif." };
+            return { name: "Jalan Santai (Strolling)", description: "Aktivitas berjalan dengan ritme yang sangat ringan, biasanya dilakukan untuk rekreasi tanpa target kebugaran yang spesifik." };
+        }
+
+        function showError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+        }
+
+        function hideError() {
+            errorMessageDiv.classList.add('hidden');
+        }
+
+        function calculate() {
+            hideError();
+            const distance = parseFloat(distanceInput.value);
+            if (isNaN(distance) || distance <= 0) {
+                showError('Harap masukkan jarak yang valid (lebih dari 0).');
+                return;
+            }
+
+            const planType = document.querySelector('input[name="planType"]:checked').value;
+            let totalPaceInSeconds, totalDurationInSeconds, category;
+
+            if (planType === 'pace') {
+                const paceMinutes = parseInt(paceMinutesInput.value) || 0;
+                const paceSeconds = parseInt(paceSecondsInput.value) || 0;
+                if ((paceMinutes <= 0 && paceSeconds <= 0) || paceMinutes < 0 || paceSeconds < 0 || paceSeconds >= 60) {
+                    showError('Harap masukkan pace yang valid.');
+                    return;
+                }
+                totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
+                totalDurationInSeconds = totalPaceInSeconds * distance;
+
+                const hours = Math.floor(totalDurationInSeconds / 3600);
+                const minutes = Math.floor((totalDurationInSeconds % 3600) / 60);
+                const seconds = Math.round(totalDurationInSeconds % 60);
+                
+                resultLabel1.textContent = "Estimasi Durasi";
+                resultValue1.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                resultLabel2.textContent = "Target Pace";
+                resultValue2.textContent = `${pad(paceMinutes)}:${pad(paceSeconds)} /km`;
+                
+                currentResults = { distance, paceMinutes, paceSeconds, duration: resultValue1.textContent };
+
+            } else { // planType === 'duration'
+                const hours = parseInt(durationHoursInput.value) || 0;
+                const minutes = parseInt(durationMinutesInput.value) || 0;
+                const seconds = parseInt(durationSecondsInput.value) || 0;
+                if ((hours <= 0 && minutes <= 0 && seconds <= 0) || hours < 0 || minutes < 0 || seconds < 0 || minutes >= 60 || seconds >= 60) {
+                    showError('Harap masukkan durasi yang valid.');
+                    return;
+                }
+                totalDurationInSeconds = (hours * 3600) + (minutes * 60) + seconds;
+                totalPaceInSeconds = totalDurationInSeconds / distance;
+                
+                const paceMinutes = Math.floor(totalPaceInSeconds / 60);
+                const paceSeconds = Math.round(totalPaceInSeconds % 60);
+
+                resultLabel1.textContent = "Target Durasi";
+                resultValue1.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                resultLabel2.textContent = "Estimasi Pace";
+                resultValue2.textContent = `${pad(paceMinutes)}:${pad(paceSeconds)} /km`;
+
+                currentResults = { distance, paceMinutes, paceSeconds, duration: resultValue1.textContent };
+            }
+
+            const speedKmh = 3600 / totalPaceInSeconds;
+            category = getCategory(totalPaceInSeconds);
+            categoryResultSpan.textContent = category.name;
+            categoryDescriptionP.textContent = category.description;
+            currentResults.speedKmh = speedKmh.toFixed(2);
+            currentResults.categoryName = category.name;
+
+            resultsDiv.classList.remove('hidden');
+            geminiContainer.classList.add('hidden');
+            geminiTipsDiv.innerHTML = '';
+        }
+        
+        function resetCalculator() {
+            distanceInput.value = '';
+            paceMinutesInput.value = '';
+            paceSecondsInput.value = '';
+            durationHoursInput.value = '';
+            durationMinutesInput.value = '';
+            durationSecondsInput.value = '';
+            hideError();
+            resultsDiv.classList.add('hidden');
+            geminiContainer.classList.add('hidden');
+            document.getElementById('planByPace').checked = true;
+            paceInputContainer.classList.remove('hidden');
+            durationInputContainer.classList.add('hidden');
+            distanceInput.focus();
+        }
+
+        function formatGeminiResponse(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                       .replace(/^\* (.*$)/gm, '<li class="ml-5 list-disc">$1</li>')
+                       .replace(/^(?!<li).*/gm, (match) => {
+                           if (match.trim() === '') return '';
+                           return `<p>${match}</p>`;
+                       })
+                       .replace(/<\/li><p>/g, '</li>')
+                       .replace(/<\/p>(\s*<li)/g, '</ul>$1')
+                       .replace(/(<li.*<\/li>)(?![\s\S]*<li)/, '$1</ul>')
+                       .replace(/(<li>.*)/, '<ul>$1');
+        }
+
+        async function getTrainingTips() {
+            if (!currentResults.distance) {
+                showError("Harap hitung dulu rencana Anda sebelum meminta tips.");
+                return;
+            }
+
+            geminiContainer.classList.remove('hidden');
+            geminiLoader.classList.remove('hidden');
+            geminiTipsDiv.classList.add('hidden');
+            geminiTipsDiv.innerHTML = '';
+
+            const prompt = `Anda adalah seorang pelatih lari virtual yang ramah dan profesional.
+Seorang pengguna sedang merencanakan aktivitas lari/jalan dengan data berikut:
+- Rencana Jarak: ${currentResults.distance} km
+- Target Durasi: ${currentResults.duration}
+- Target Pace: ${currentResults.paceMinutes} menit ${currentResults.paceSeconds} detik per km
+- Kecepatan: ${currentResults.speedKmh} km/jam
+- Kategori Aktivitas: ${currentResults.categoryName}
+
+Berdasarkan rencana ini, berikan 3-4 tips latihan yang singkat, padat, dan sangat relevan dalam format poin-poin (gunakan tanda *). Tips harus memotivasi dan mudah dipahami. Fokus pada area seperti:
+1. Saran persiapan sebelum lari (pemanasan, dll).
+2. Strategi saat berlari untuk mencapai target ini.
+3. Saran pemulihan setelah menyelesaikan latihan ini.
+4. Motivasi untuk menjalankan rencana ini.
+
+Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan positif seperti "Kerja bagus merencanakan latihanmu!".`;
+            
+            try {
+                const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Disediakan oleh environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                
+                const result = await response.json();
+                
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const rawText = result.candidates[0].content.parts[0].text;
+                    geminiTipsDiv.innerHTML = formatGeminiResponse(rawText);
+                } else {
+                    throw new Error("Respons dari API tidak valid atau kosong.");
+                }
+
+            } catch (error) {
+                console.error("Error fetching Gemini tips:", error);
+                geminiTipsDiv.innerHTML = `<p class="text-red-500 text-center">Maaf, terjadi kesalahan saat mengambil tips. Silakan coba lagi nanti.</p>`;
+            } finally {
+                geminiLoader.classList.add('hidden');
+                geminiTipsDiv.classList.remove('hidden');
+            }
+        }
+
+        // --- Event Listeners ---
+        calculateBtn.addEventListener('click', calculate);
+        resetBtn.addEventListener('click', resetCalculator);
+        getTipsBtn.addEventListener('click', getTrainingTips);
+    </script>
+</body>
+</html>
