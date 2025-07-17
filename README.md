@@ -6,6 +6,8 @@ Dokumentasi Aplikasi Perencanaan Olah Raga Lari / Jalan (Kalkulator Lari)
 
 Selamat datang di Aplikasi Perencanaan Olah Raga Lari / Jalan! Aplikasi ini dirancang untuk menjadi asisten pribadi Anda dalam merencanakan setiap sesi latihan lari atau jalan kaki. Baik Anda seorang pemula yang baru memulai atau pelari berpengalaman, aplikasi ini membantu Anda menetapkan target yang jelas dan memberikan wawasan untuk mencapainya.
 
+Akses Aplikasi di [https://kalkulatorlari.isparmo.com/](https://kalkulatorlari.isparmo.com/)
+
 Tujuan utama aplikasi ini adalah mengubah cara Anda berlatih, dari sekadar beraktivitas menjadi latihan yang terstruktur dan terukur. Dengan fitur cerdas yang didukung oleh AI, Anda tidak hanya mendapatkan angka, tetapi juga saran praktis untuk menjadi lebih baik.
 
 2\. Fitur Utama
