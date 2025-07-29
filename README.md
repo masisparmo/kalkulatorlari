@@ -1,71 +1,114 @@
-Dokumentasi Aplikasi Perencanaan Olah Raga Lari / Jalan (Kalkulator Lari)
-=======================================================
+**Web Aplikasi Perencanaan Olah Raga Lari / Jalan (Kalkulator Lari)**
+=================================================================
 
-1\. Pengenalan Aplikasi
------------------------
+Aplikasi web interaktif yang dirancang untuk membantu pelari dan pejalan kaki merencanakan sesi latihan mereka dengan mudah dan efektif. Dilengkapi dengan dukungan AI dari "Coach AI" untuk memberikan tips latihan yang dipersonalisasi.
 
-Selamat datang di Aplikasi Perencanaan Olah Raga Lari / Jalan! Aplikasi ini dirancang untuk menjadi asisten pribadi Anda dalam merencanakan setiap sesi latihan lari atau jalan kaki. Baik Anda seorang pemula yang baru memulai atau pelari berpengalaman, aplikasi ini membantu Anda menetapkan target yang jelas dan memberikan wawasan untuk mencapainya.
+Aplikasi ini bisa langsung diakses di [https://kalkulatorlari.isparmo.com/](https://kalkulatorlari.isparmo.com/) 
 
-Akses Aplikasi di [https://kalkulatorlari.isparmo.com/](https://kalkulatorlari.isparmo.com/)
+**Deskripsi**
+-------------
 
-Tujuan utama aplikasi ini adalah mengubah cara Anda berlatih, dari sekadar beraktivitas menjadi latihan yang terstruktur dan terukur. Dengan fitur cerdas yang didukung oleh AI, Anda tidak hanya mendapatkan angka, tetapi juga saran praktis untuk menjadi lebih baik.
+Aplikasi ini memungkinkan pengguna untuk membuat rencana latihan berdasarkan dua metrik utama: **pace** (laju) atau **durasi**. Dengan memasukkan target jarak, pengguna dapat menghitung estimasi durasi yang dibutuhkan jika berlatih dengan pace tertentu, atau sebaliknya, menghitung pace yang harus dicapai untuk menyelesaikan jarak dalam durasi yang ditargetkan.
 
-2\. Fitur Utama
----------------
+Selain itu, aplikasi ini memberikan wawasan tambahan seperti kategori aktivitas (mulai dari jalan santai hingga sprint), estimasi total langkah kaki, dan yang paling utama, tips latihan yang relevan dari pelatih virtual berpengalaman, "Coach Gem", yang didukung oleh Google Gemini.
 
-Aplikasi ini dilengkapi dengan beberapa fitur canggih untuk memaksimalkan pengalaman latihan Anda:
+**Teknologi yang Digunakan**
+----------------------------
 
-*   **Perencanaan Fleksibel:** Anda memiliki kebebasan untuk merencanakan latihan berdasarkan dua metrik utama:
-    
-    *   **Target Pace:** Tentukan seberapa cepat Anda ingin berlari per kilometernya, dan aplikasi akan mengestimasi total durasi yang dibutuhkan.
-        
-    *   **Target Durasi:** Tentukan berapa lama Anda ingin berolahraga, dan aplikasi akan menghitung _pace_ yang harus Anda pertahankan.
-        
-*   **Kalkulasi Otomatis:** Aplikasi secara cerdas menghitung estimasi durasi atau _pace_ berdasarkan data yang Anda masukkan, menghilangkan kebutuhan untuk perhitungan manual.
-    
-*   **Kategori Aktivitas:** Setiap rencana latihan akan secara otomatis diklasifikasikan ke dalam kategori tertentu (misalnya, Lari Tempo, Jalan Cepat, Lari Ringan), lengkap dengan deskripsi untuk membantu Anda memahami jenis dan tujuan dari latihan tersebut.
-    
-*   **Tips Latihan Berbasis AI (Didukung oleh Gemini):** Fitur unggulan aplikasi ini adalah kemampuannya untuk memberikan tips latihan yang dipersonalisasi. Setelah Anda membuat rencana, Anda bisa meminta saran dari AI yang akan berperan sebagai pelatih virtual Anda. Tips ini mencakup:
-    
-    *   Saran pemanasan dan persiapan.
-        
-    *   Strategi untuk menjaga kecepatan dan stamina saat berlari.
-        
-    *   Rekomendasi pendinginan dan pemulihan pasca-latihan.
-        
-    *   Kata-kata motivasi untuk membuat Anda tetap semangat.
-        
+Proyek ini dibangun menggunakan teknologi web front-end standar yang ringan dan modern:
 
-3\. Cara Menggunakan Aplikasi
------------------------------
-
-Menggunakan aplikasi ini sangat mudah. Ikuti langkah-langkah berikut:
-
-1.  **Masukkan Rencana Jarak:** Mulailah dengan mengetik total jarak (dalam kilometer) yang ingin Anda tempuh pada kolom **"Rencana Jarak Tempuh (km)"**.
+*   **HTML5:** Untuk struktur dasar aplikasi web.
     
-2.  **Pilih Basis Perencanaan:** Tentukan bagaimana Anda ingin merencanakan latihan. Klik pada salah satu dari dua pilihan:
+*   **Tailwind CSS:** Untuk styling yang cepat, responsif, dan modern langsung di dalam markup.
     
-    *   **Pace:** Jika Anda ingin berlatih dengan target kecepatan tertentu.
-        
-    *   **Durasi:** Jika Anda ingin berlatih dengan target waktu tertentu.
-        
-3.  **Isi Detail Target:**
+*   **JavaScript (ES6+):** Untuk semua logika kalkulasi, interaktivitas DOM, dan integrasi API.
     
-    *   Jika memilih **Pace**, masukkan target menit dan detik pada kolom **"Target Pace per km"**.
-        
-    *   Jika memilih **Durasi**, masukkan target jam, menit, dan detik pada kolom **"Target Durasi"**.
-        
-4.  **Hitung Rencana Anda:** Klik tombol **"Hitung Rencana"**. Aplikasi akan langsung menampilkan hasilnya di bagian bawah.
+*   **Google Fonts:** Menggunakan font "Inter" untuk tipografi yang bersih dan mudah dibaca.
     
-5.  **Tinjau Hasil:** Anda akan melihat:
-    
-    *   Estimasi Durasi atau Pace yang dihitung secara otomatis.
-        
-    *   Kategori aktivitas lari Anda beserta penjelasannya.
-        
-6.  **Dapatkan Tips dari AI:** Untuk mendapatkan saran lebih lanjut, klik tombol **"✨ Dapatkan Tips Latihan"**. Tunggu sesaat sementara AI menganalisis rencana Anda dan memberikan tips yang relevan.
-    
-7.  **Reset:** Jika ingin membuat rencana baru, cukup klik tombol **"Reset"** untuk mengosongkan semua kolom input.
+*   **Google Gemini API:** Untuk fitur tips latihan yang didukung oleh kecerdasan buatan.
     
 
-Selamat berlatih!
+**Fitur**
+---------
+
+*   **Perencanaan Ganda:** Rencanakan latihan berdasarkan **Target Pace** atau **Target Durasi**.
+    
+*   **Kalkulasi Otomatis:**
+    
+*   Hitung estimasi **durasi total** dari jarak dan pace.
+    
+*   Hitung estimasi **pace per km** dari jarak dan durasi.
+    
+*   **Estimasi Langkah Kaki:** Dapatkan perkiraan jumlah langkah yang akan Anda tempuh selama sesi latihan.
+    
+*   **Kategori Aktivitas:** Secara otomatis mengklasifikasikan jenis latihan Anda (misalnya, Lari Tempo, Jalan Cepat) berdasarkan pace yang dihitung.
+    
+*   **Tips dari Pelatih AI "Coach Ai":** Dapatkan saran latihan yang dipersonalisasi dan memotivasi setelah membuat rencana. Fitur ini memerlukan Kunci API Google Gemini.
+    
+*   **Desain Responsif:** Tampilan yang optimal di berbagai perangkat, baik desktop maupun mobile.
+    
+*   **Antarmuka Intuitif:** Alur pengguna yang sederhana dengan tombol Hitung dan Reset yang jelas.
+    
+
+**Petunjuk Penggunaan (Setup)**
+-------------------------------
+
+Aplikasi ini sangat mudah digunakan karena tidak memerlukan proses build atau instalasi yang rumit.
+
+1.  **Unduh File:** Cukup unduh file index.html dari repositori ini.
+    
+2.  **Buka di Browser:** Buka file index.html tersebut menggunakan browser web modern apa pun (seperti Google Chrome, Firefox, atau Safari). Atau bisa langsung jalankan dengan mengunjungi link: [https://kalkulatorlari.isparmo.com/](https://kalkulatorlari.isparmo.com/) 
+    
+3.  **Mulai Merencanakan:**
+    
+
+*   Masukkan **Rencana Jarak Tempuh** dalam kilometer.
+    
+*   Pilih mode perencanaan: **Pace** atau **Durasi**.
+    
+*   Isi input yang sesuai (menit/detik untuk pace, atau jam/menit/detik untuk durasi).
+    
+*   Klik tombol **"Hitung Rencana"**.
+    
+
+4. **Dapatkan Tips (Opsional):**
+
+*   Setelah hasil perhitungan muncul, klik tombol **"Dapatkan Tips dari Coach Ai"**.
+    
+*   Sebuah jendela akan muncul meminta **Kunci API Gemini**.
+    
+
+**Cara mendapatkan Kunci API Gemini**
+
+Untuk menggunakan fitur Dapatkan Tips dari Coach Ai, Anda memerlukan Kunci API Google Gemini. Anda bisa mendapatkannya secara gratis dengan mengikuti langkah-langkah berikut:
+
+1.  Kunjungi [**Google AI Studio**](https://aistudio.google.com/app/apikey).
+    
+2.  Masuk dengan akun Google Anda.
+    
+3.  Klik **"Create API key"** untuk membuat kunci baru.
+    
+4.  Salin kunci yang telah dibuat dan tempelkan ke dalam jendela yang muncul di aplikasi.
+    
+
+Kunci API Anda akan disimpan di localStorage browser untuk kemudahan penggunaan di masa mendatang, sehingga Anda tidak perlu memasukkannya berulang kali
+
+**Penjelasan Dukungan AI**
+--------------------------
+
+Ada dua dukungan AI (LLM) yang digunakan:
+
+1.  Dukungan dari **IBM Granite** yang dirunning menggunakan API dalam bahasa Python di lingkungan IDE Google Colab, untuk membuat membuat dokumentasi dari web apps ini.
+    
+2.  Dukungan Google Gemini sebagai Coach Ai yang bisa memberikan tips atau arahan terkait dengan hasil perencanaan lari atau jalan kaki yang telah dihitung.
+    
+
+**Coach Ai** adalah seorang pelatih lari dan jalan kaki virtual yang berpenglaman puluhan tahun di dunia olah raga.
+
+**Bagaimana Cara Kerjanya?**
+
+1.  Setelah Anda menghitung rencana latihan, data seperti jarak, pace, durasi, dan kategori aktivitas dikirimkan ke Coach Ai.
+    
+2.  Coach Ai, yang telah diinstruksikan untuk bertindak sebagai pelatih berpengalaman, akan menganalisis data ini.
+    
+3.  Berdasarkan analisis tersebut, Coach Gem akan memberikan 3-5 tips praktis yang relevan dengan rencana spesifik Anda, mencakup aspek pemanasan, strategi saat beraktivitas, dan pemulihan.
