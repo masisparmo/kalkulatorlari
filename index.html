@@ -50,16 +50,13 @@
     </style>
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen py-10 px-4">
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-2xl">
         
         <!-- Header Aplikasi -->
         <div class="text-center mb-8">
             <div class="inline-block bg-indigo-100 text-indigo-600 p-3 rounded-full mb-4">
                 <!-- Ikon Orang Berlari -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                  <path d="M15.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 12H10a1 1 0 110-2h2.586l-2.293-2.293a1 1 0 011.414-1.414l4 4z" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12a3 3 0 1 0-6 0 3 3 0 0 0 6 0z"/><path d="M20.9 19.8A9 9 0 1 0 3.1 19.8"/><path d="m6.1 19-1.8 2.7"/><path d="m17.9 19 1.8 2.7"/></svg>
             </div>
             <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Aplikasi Perencanaan Olah Raga Lari / Jalan</h1>
             <p class="text-gray-500 mt-2">Rencanakan sesi latihan Anda berdasarkan target Durasi atau Pace.</p>
@@ -126,14 +123,19 @@
             <h2 class="text-xl font-bold text-gray-800 text-center mb-5">Rencana Latihan Anda</h2>
             <div class="space-y-4">
                 <!-- Hasil Kalkulasi -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="resultCard1" class="bg-slate-50 p-4 rounded-lg text-center">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-lg text-center">
                         <span id="resultLabel1" class="text-sm font-medium text-gray-500">Target Durasi</span>
                         <p id="resultValue1" class="font-bold text-3xl text-indigo-600 mt-1">00:00:00</p>
                     </div>
-                    <div id="resultCard2" class="bg-slate-50 p-4 rounded-lg text-center">
+                    <div class="bg-slate-50 p-4 rounded-lg text-center">
                         <span id="resultLabel2" class="text-sm font-medium text-gray-500">Target Pace</span>
                         <p id="resultValue2" class="font-bold text-3xl text-indigo-600 mt-1">00:00 /km</p>
+                    </div>
+                     <!-- Kartu Hasil Jumlah Langkah Kaki -->
+                    <div class="bg-slate-50 p-4 rounded-lg text-center">
+                        <span class="text-sm font-medium text-gray-500">Estimasi Langkah</span>
+                        <p id="resultValueSteps" class="font-bold text-3xl text-indigo-600 mt-1">0</p>
                     </div>
                 </div>
                 
@@ -186,6 +188,7 @@
         const resultValue1 = document.getElementById('resultValue1');
         const resultLabel2 = document.getElementById('resultLabel2');
         const resultValue2 = document.getElementById('resultValue2');
+        const resultValueSteps = document.getElementById('resultValueSteps'); // Elemen baru untuk langkah
         
         const categoryResultSpan = document.getElementById('categoryResult');
         const categoryDescriptionP = document.getElementById('categoryDescription');
@@ -220,6 +223,16 @@
             if (paceInSeconds < 555) return { name: "Lari Ringan / Jarak Jauh", description: "Pace yang stabil dan nyaman, di mana Anda masih bisa bercakap-cakap. Biasanya dilakukan untuk pemulihan atau membangun daya tahan aerobik." };
             if (paceInSeconds < 750) return { name: "Jalan Cepat / Power Walking", description: "Kecepatan yang membuat napas dan detak jantung sedikit meningkat. Aktivitas ini sudah tergolong sebagai olahraga kardio yang efektif." };
             return { name: "Jalan Santai (Strolling)", description: "Aktivitas berjalan dengan ritme yang sangat ringan, biasanya dilakukan untuk rekreasi tanpa target kebugaran yang spesifik." };
+        }
+        
+        // Fungsi untuk mengestimasi irama langkah (cadence) berdasarkan pace
+        function getEstimatedCadence(paceInSeconds) {
+            if (paceInSeconds < 240) return 185; // Sprint: ~185+ spm
+            if (paceInSeconds < 330) return 175; // Interval: ~175-185 spm
+            if (paceInSeconds < 420) return 170; // Tempo: ~165-175 spm
+            if (paceInSeconds < 555) return 160; // Lari Ringan: ~150-165 spm
+            if (paceInSeconds < 750) return 130; // Jalan Cepat: ~120-135 spm
+            return 115; // Jalan Santai: ~110-120 spm
         }
 
         function showError(message) {
@@ -286,6 +299,14 @@
                 currentResults = { distance, paceMinutes, paceSeconds, duration: resultValue1.textContent };
             }
 
+            // --- Kalkulasi Baru untuk Jumlah Langkah ---
+            const estimatedCadence = getEstimatedCadence(totalPaceInSeconds);
+            const totalDurationInMinutes = totalDurationInSeconds / 60;
+            const estimatedTotalSteps = Math.round(estimatedCadence * totalDurationInMinutes);
+            resultValueSteps.textContent = estimatedTotalSteps.toLocaleString('id-ID');
+            currentResults.estimatedSteps = estimatedTotalSteps;
+            // --- Akhir Kalkulasi Baru ---
+
             const speedKmh = 3600 / totalPaceInSeconds;
             category = getCategory(totalPaceInSeconds);
             categoryResultSpan.textContent = category.name;
@@ -345,6 +366,7 @@ Seorang pengguna sedang merencanakan aktivitas lari/jalan dengan data berikut:
 - Target Pace: ${currentResults.paceMinutes} menit ${currentResults.paceSeconds} detik per km
 - Kecepatan: ${currentResults.speedKmh} km/jam
 - Kategori Aktivitas: ${currentResults.categoryName}
+- Estimasi Jumlah Langkah: ${currentResults.estimatedSteps.toLocaleString('id-ID')} langkah
 
 Berdasarkan rencana ini, berikan 3-4 tips latihan yang singkat, padat, dan sangat relevan dalam format poin-poin (gunakan tanda *). Tips harus memotivasi dan mudah dipahami. Fokus pada area seperti:
 1. Saran persiapan sebelum lari (pemanasan, dll).
