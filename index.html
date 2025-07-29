@@ -47,6 +47,14 @@
             background-color: #eef2ff; /* indigo-50 */
             color: #4338ca; /* indigo-700 */
         }
+        
+        /* Styling untuk modal */
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-slate-100 flex items-center justify-center min-h-screen py-10 px-4">
@@ -151,7 +159,7 @@
                 <!-- Fitur Gemini -->
                 <div class="mt-6 text-center">
                     <button id="getTipsBtn" class="bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:shadow-lg hover:from-teal-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200 transform active:scale-95">
-                        ✨ Dapatkan Tips Latihan
+                        ✨ Dapatkan Tips dari Coach Gem
                     </button>
                 </div>
 
@@ -159,13 +167,36 @@
                 <div id="gemini-container" class="mt-6 hidden">
                     <div id="gemini-loader" class="flex justify-center items-center p-4">
                         <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <p class="ml-3 text-gray-600">Membuat tips untuk Anda...</p>
+                        <p class="ml-3 text-gray-600">Coach Gem sedang menyiapkan tips untuk Anda...</p>
                     </div>
                     <div id="gemini-tips" class="bg-indigo-50 p-5 rounded-lg text-gray-700 space-y-3"></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal untuk API Key -->
+    <div id="apiKeyModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-overlay">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform scale-95 modal-content">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Masukkan Kunci API Gemini</h2>
+            <p class="text-gray-600 mb-6">Untuk mendapatkan tips dari Coach Gem, Anda memerlukan Kunci API dari Google. Anda bisa mendapatkannya secara gratis.</p>
+            
+            <div>
+                <label for="apiKeyInput" class="block text-sm font-semibold text-gray-700 mb-2">Kunci API Gemini Anda</label>
+                <input type="password" id="apiKeyInput" placeholder="Masukkan kunci API di sini" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+            </div>
+
+            <p class="text-xs text-gray-500 mt-4">
+                Klik <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline font-medium">di sini untuk mendapatkan Kunci API</a> di Google AI Studio. Cukup buat kunci baru dan salin ke sini.
+            </p>
+
+            <div class="mt-8 grid grid-cols-2 gap-4">
+                <button id="cancelApiKeyBtn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-all duration-200">Batal</button>
+                <button id="saveApiKeyBtn" class="w-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-200">Simpan & Dapatkan Tips</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // Mendapatkan elemen-elemen dari DOM
@@ -188,7 +219,7 @@
         const resultValue1 = document.getElementById('resultValue1');
         const resultLabel2 = document.getElementById('resultLabel2');
         const resultValue2 = document.getElementById('resultValue2');
-        const resultValueSteps = document.getElementById('resultValueSteps'); // Elemen baru untuk langkah
+        const resultValueSteps = document.getElementById('resultValueSteps');
         
         const categoryResultSpan = document.getElementById('categoryResult');
         const categoryDescriptionP = document.getElementById('categoryDescription');
@@ -197,6 +228,13 @@
         const geminiContainer = document.getElementById('gemini-container');
         const geminiLoader = document.getElementById('gemini-loader');
         const geminiTipsDiv = document.getElementById('gemini-tips');
+        
+        // Elemen Modal API Key
+        const apiKeyModal = document.getElementById('apiKeyModal');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+        const cancelApiKeyBtn = document.getElementById('cancelApiKeyBtn');
+        const modalContent = apiKeyModal.querySelector('.modal-content');
 
         let currentResults = {};
 
@@ -225,7 +263,6 @@
             return { name: "Jalan Santai (Strolling)", description: "Aktivitas berjalan dengan ritme yang sangat ringan, biasanya dilakukan untuk rekreasi tanpa target kebugaran yang spesifik." };
         }
         
-        // Fungsi untuk mengestimasi irama langkah (cadence) berdasarkan pace
         function getEstimatedCadence(paceInSeconds) {
             if (paceInSeconds < 240) return 185; // Sprint: ~185+ spm
             if (paceInSeconds < 330) return 175; // Interval: ~175-185 spm
@@ -265,19 +302,15 @@
                 }
                 totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
                 totalDurationInSeconds = totalPaceInSeconds * distance;
-
                 const hours = Math.floor(totalDurationInSeconds / 3600);
                 const minutes = Math.floor((totalDurationInSeconds % 3600) / 60);
                 const seconds = Math.round(totalDurationInSeconds % 60);
-                
                 resultLabel1.textContent = "Estimasi Durasi";
                 resultValue1.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
                 resultLabel2.textContent = "Target Pace";
                 resultValue2.textContent = `${pad(paceMinutes)}:${pad(paceSeconds)} /km`;
-                
                 currentResults = { distance, paceMinutes, paceSeconds, duration: resultValue1.textContent };
-
-            } else { // planType === 'duration'
+            } else {
                 const hours = parseInt(durationHoursInput.value) || 0;
                 const minutes = parseInt(durationMinutesInput.value) || 0;
                 const seconds = parseInt(durationSecondsInput.value) || 0;
@@ -287,25 +320,20 @@
                 }
                 totalDurationInSeconds = (hours * 3600) + (minutes * 60) + seconds;
                 totalPaceInSeconds = totalDurationInSeconds / distance;
-                
                 const paceMinutes = Math.floor(totalPaceInSeconds / 60);
                 const paceSeconds = Math.round(totalPaceInSeconds % 60);
-
                 resultLabel1.textContent = "Target Durasi";
                 resultValue1.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
                 resultLabel2.textContent = "Estimasi Pace";
                 resultValue2.textContent = `${pad(paceMinutes)}:${pad(paceSeconds)} /km`;
-
                 currentResults = { distance, paceMinutes, paceSeconds, duration: resultValue1.textContent };
             }
 
-            // --- Kalkulasi Baru untuk Jumlah Langkah ---
             const estimatedCadence = getEstimatedCadence(totalPaceInSeconds);
             const totalDurationInMinutes = totalDurationInSeconds / 60;
             const estimatedTotalSteps = Math.round(estimatedCadence * totalDurationInMinutes);
             resultValueSteps.textContent = estimatedTotalSteps.toLocaleString('id-ID');
             currentResults.estimatedSteps = estimatedTotalSteps;
-            // --- Akhir Kalkulasi Baru ---
 
             const speedKmh = 3600 / totalPaceInSeconds;
             category = getCategory(totalPaceInSeconds);
@@ -348,7 +376,7 @@
                        .replace(/(<li>.*)/, '<ul>$1');
         }
 
-        async function getTrainingTips() {
+        async function getTrainingTips(apiKey) {
             if (!currentResults.distance) {
                 showError("Harap hitung dulu rencana Anda sebelum meminta tips.");
                 return;
@@ -359,8 +387,8 @@
             geminiTipsDiv.classList.add('hidden');
             geminiTipsDiv.innerHTML = '';
 
-            const prompt = `Anda adalah seorang pelatih lari virtual yang ramah dan profesional.
-Seorang pengguna sedang merencanakan aktivitas lari/jalan dengan data berikut:
+            const prompt = `Anda adalah "Coach Gem", seorang pelatih olah raga lari dan jalan kaki virtual dengan pengalaman puluhan tahun. Anda dikenal bijak, memotivasi, dan memberikan saran yang praktis.
+Seorang pengguna sedang merencanakan aktivitas dengan data berikut:
 - Rencana Jarak: ${currentResults.distance} km
 - Target Durasi: ${currentResults.duration}
 - Target Pace: ${currentResults.paceMinutes} menit ${currentResults.paceSeconds} detik per km
@@ -374,12 +402,11 @@ Berdasarkan rencana ini, berikan 3-4 tips latihan yang singkat, padat, dan sanga
 3. Saran pemulihan setelah menyelesaikan latihan ini.
 4. Motivasi untuk menjalankan rencana ini.
 
-Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan positif seperti "Kerja bagus merencanakan latihanmu!".`;
+Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan positif dan panggil diri Anda "Coach Gem".`;
             
             try {
                 const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 const payload = { contents: chatHistory };
-                const apiKey = ""; // Disediakan oleh environment
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -388,7 +415,10 @@ Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan po
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
+                }
                 
                 const result = await response.json();
                 
@@ -401,17 +431,65 @@ Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan po
 
             } catch (error) {
                 console.error("Error fetching Gemini tips:", error);
-                geminiTipsDiv.innerHTML = `<p class="text-red-500 text-center">Maaf, terjadi kesalahan saat mengambil tips. Silakan coba lagi nanti.</p>`;
+                geminiTipsDiv.innerHTML = `<p class="text-red-500 text-center">Maaf, terjadi kesalahan: ${error.message}. Pastikan Kunci API Anda benar dan coba lagi.</p>`;
             } finally {
                 geminiLoader.classList.add('hidden');
                 geminiTipsDiv.classList.remove('hidden');
             }
         }
+        
+        // --- Fungsi Modal ---
+        function openModal() {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+            apiKeyModal.classList.remove('hidden');
+            setTimeout(() => {
+                apiKeyModal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            apiKeyModal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                apiKeyModal.classList.add('hidden');
+            }, 300);
+        }
 
         // --- Event Listeners ---
         calculateBtn.addEventListener('click', calculate);
         resetBtn.addEventListener('click', resetCalculator);
-        getTipsBtn.addEventListener('click', getTrainingTips);
+        getTipsBtn.addEventListener('click', () => {
+             if (!currentResults.distance) {
+                showError("Harap hitung dulu rencana Anda sebelum meminta tips.");
+                return;
+            }
+            openModal();
+        });
+
+        // Event Listeners untuk Modal
+        saveApiKeyBtn.addEventListener('click', () => {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                alert("Harap masukkan Kunci API Anda.");
+                return;
+            }
+            localStorage.setItem('geminiApiKey', apiKey);
+            closeModal();
+            getTrainingTips(apiKey);
+        });
+        cancelApiKeyBtn.addEventListener('click', closeModal);
+        apiKeyModal.addEventListener('click', (e) => {
+            if (e.target === apiKeyModal) {
+                closeModal();
+            }
+        });
+
     </script>
 </body>
 </html>
