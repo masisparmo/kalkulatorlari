@@ -167,7 +167,7 @@
                 <div id="gemini-container" class="mt-6 hidden">
                     <div id="gemini-loader" class="flex justify-center items-center p-4">
                         <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <p class="ml-3 text-gray-600">Coach Gem sedang menyiapkan tips untuk Anda...</p>
+                        <p class="ml-3 text-gray-600">Coach Ai sedang menyiapkan tips untuk Anda...</p>
                     </div>
                     <div id="gemini-tips" class="bg-indigo-50 p-5 rounded-lg text-gray-700 space-y-3"></div>
                 </div>
@@ -387,7 +387,7 @@
             geminiTipsDiv.classList.add('hidden');
             geminiTipsDiv.innerHTML = '';
 
-            const prompt = `Anda adalah "Coach Gem", seorang pelatih olah raga lari dan jalan kaki virtual dengan pengalaman puluhan tahun. Anda dikenal bijak, memotivasi, dan memberikan saran yang praktis.
+            const prompt = `Anda adalah "Coach Ai", seorang pelatih olah raga lari dan jalan kaki virtual dengan pengalaman puluhan tahun. Anda dikenal bijak, memotivasi, dan memberikan saran yang praktis.
 Seorang pengguna sedang merencanakan aktivitas dengan data berikut:
 - Rencana Jarak: ${currentResults.distance} km
 - Target Durasi: ${currentResults.duration}
@@ -396,13 +396,14 @@ Seorang pengguna sedang merencanakan aktivitas dengan data berikut:
 - Kategori Aktivitas: ${currentResults.categoryName}
 - Estimasi Jumlah Langkah: ${currentResults.estimatedSteps.toLocaleString('id-ID')} langkah
 
-Berdasarkan rencana ini, berikan 3-4 tips latihan yang singkat, padat, dan sangat relevan dalam format poin-poin (gunakan tanda *). Tips harus memotivasi dan mudah dipahami. Fokus pada area seperti:
+Berdasarkan rencana ini, berikan 3-5 tips latihan yang singkat, padat, dan sangat relevan dalam format poin-poin (gunakan tanda *). Tips harus memotivasi dan mudah dipahami. Fokus pada area seperti:
 1. Saran persiapan sebelum lari (pemanasan, dll).
 2. Strategi saat berlari untuk mencapai target ini.
 3. Saran pemulihan setelah menyelesaikan latihan ini.
 4. Motivasi untuk menjalankan rencana ini.
+5. Motivasi agar berolah raga rutin minimal seminggu 2x dengan durasi total 120 menit.
 
-Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan positif dan panggil diri Anda "Coach Gem".`;
+Gunakan bahasa Indonesia yang santai dan menyemangati. Mulailah dengan sapaan positif dan panggil diri Anda "Coach Ai".`;
             
             try {
                 const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
